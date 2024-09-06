@@ -5,7 +5,8 @@ COLOR_TO_INDEX = {'red': 0, 'green': 1, 'blue': 2, 'yellow': 3, 'white': 4}
 NUM_TO_INDEX = {1: 0, 2: 1, 3: 2, 4: 3, 5: 4}
 INDEX_TO_COLOR = {0: 'red', 1: 'green', 2: 'blue', 3: 'yellow', 4: 'white'}
 INDEX_TO_NUM = {0: 1, 1: 2, 2: 3, 3: 4, 4: 5}
-
+COLORS = ['red', 'green', 'blue', 'yellow', 'white']
+NUMS = [1, 2, 3, 4, 5]
 class HanabiRound(Round):
     def __init__(self, dealer, num_players, np_random, players):
         self.np_random = np_random
@@ -94,17 +95,18 @@ class HanabiRound(Round):
                 hinted[i] = 0
         self.actions_history.append((player, 'hint', hinted))   
 
-    def get_actions(self):
+    def get_legal_actions(self):
         actions = []
+        for (i, card) in enumerate(self.players[self.current_player].hand):
+            actions.append(f'play-{i}')
+            actions.append(f'discard-{i}')
         if self.hints > 0:
-            for i in range(self.num_players):
-                if i != self.current_player:
-                    for j in range(9):
-                        actions.append(('hint', i, j))
-        for i in range(len(self.players[self.current_player].hand)):
-            actions.append(('play', i))
-            if (self.hints > 0):
-                actions.append(('discard', i))
+            for player in self.players:
+                if player.id != self.current_player:
+                    for color in COLORS:
+                        actions.append(f'hint-color-{player.id}-{color}')
+                    for num in NUMS:
+                        actions.append(f'hint-num-{player.id}-{num}')
         return actions
     
     def get_state(self, player_id):
@@ -123,7 +125,7 @@ class HanabiRound(Round):
         state['cards_left'] = self.cards_left
         state['discard'] = self.discard
         state['current_player'] = self.current_player
-        state['legal_actions'] = self.get_actions()
+        state['legal_actions'] = self.get_legal_actions()
         hand_dict = {}
         for player in self.players:
             hand_dict[player.id] = player.hand

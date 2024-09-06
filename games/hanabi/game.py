@@ -54,7 +54,7 @@ class HanabiGame(Game):
         return self.round.get_state(player_id)
     
     def get_legal_actions(self):
-        return self.round.get_actions()
+        return self.round.get_legal_actions()
     
     def get_num_players(self):
         return self.num_players
