@@ -144,6 +144,7 @@ class Env(object):
             if not is_training:
                 action, _ = self.agents[player_id].eval_step(state)
             else:
+                # print("dimention of state: ",state['obs'].shape)
                 action = self.agents[player_id].step(state)
 
             # Environment steps

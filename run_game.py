@@ -8,14 +8,15 @@ from envs.registration import make
 import os
 import argparse
 
-from utils import (
+from utils.utils import (
     get_device,
     set_seed,
     tournament,
     reorganize,
-    Logger,
     plot_curve,
 )
+
+from utils.logger import Logger
 
 import torch
 
@@ -43,7 +44,6 @@ def train(args):
 
     # Initialize the agent and use random agents as opponents
     if args.algorithm == 'dqn':
-        from agents import DQNAgent
         if args.load_checkpoint_path != "":
             agent = DQNAgent.from_checkpoint(checkpoint=torch.load(args.load_checkpoint_path))
         else:

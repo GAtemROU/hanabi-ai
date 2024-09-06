@@ -73,5 +73,4 @@ def get_args():
 
     args = parser.parse_args()
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = args.cuda
     return parser.parse_args()
