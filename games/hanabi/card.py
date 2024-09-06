@@ -10,13 +10,18 @@ class HanabiCard(Card):
     def __init__(self, num, color):
         self.num = num
         self.color = color
-        self.hinted = [0] * 10
+        # first 5 positive hints for colors, next 5 for numbers
+        # 10-15 negative hints for colors, 15-20 for numbers
+        self.hinted = np.zeros(20)
 
     def get_str(self):
         return f'{self.color}-{self.num}'        
     
     def get_id(self):
         return COLOR_TO_INDEX[self.color] * 5 + self.num - 1
+    
+    def get_hinted(self):
+        return self.hinted
 
     # to_string
     def __str__(self):

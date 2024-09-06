@@ -89,12 +89,16 @@ class HanabiRound(Round):
         for (i, card) in enumerate(self.players[target_player].hand):
             if card.color == color:
                 card.hinted[COLOR_TO_INDEX[color]] = 1
+            else:
+                card.hinted[10 + COLOR_TO_INDEX[color]] = 1
         self.actions_history.append((player.get_player_id(), 'hint-color', target_player, color))
     
     def _hint_num(self, player, target_player, num):
         for (i, card) in enumerate(self.players[target_player].hand):
             if card.num == num:
                 card.hinted[5 + NUM_TO_INDEX[num]] = 1
+            else:
+                card.hinted[15 + NUM_TO_INDEX[num]] = 1
         self.actions_history.append((player.get_player_id(), 'hint-num', target_player, num))
 
     def get_actions(self):
