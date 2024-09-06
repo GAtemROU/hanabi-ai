@@ -86,14 +86,14 @@ def get_action_list():
         # return state
     
 def encode_hands(obs, state):
-    print("encoded hands")
+    # print("encoded hands")
     for player_id in state['hands']:
 
         if player_id == state['current_player']: continue 
-        print(f"player_id: {player_id}")
+        # print(f"player_id: {player_id}")
         hand = state['hands'][player_id]
         for i, card in enumerate(hand):
-            print(f"card: {card}")
+            # print(f"card: {card}")
             obs[player_id, i, :] = card.encode()
     
     # print(obs)
@@ -123,5 +123,11 @@ def encode_state_info(obs, state):
 
 
 def encode_hinted(obs, state):
+    for player_id in state['hands']:
+        hand = state['hands'][player_id]
+        for i, card in enumerate(hand):
+            obs[2 * player_id : 2 * player_id + 2, i, : ] = card.get_hinted().reshape(2, 10)
+    # print('encoded hinted')
+    # print(obs)
 
     return obs

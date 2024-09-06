@@ -54,7 +54,7 @@ class HanabiRound(Round):
             self.actions_history.append((player.get_player_id(), 'play', card.__str__(), "fail"))
             if self.lives == 0:
                 self.is_over = True
-                self.print_history()
+                # self.print_history()
 
                 print("Game Over. Final Score: ", sum(self.field))
 
