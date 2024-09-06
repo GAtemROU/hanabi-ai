@@ -10,3 +10,4 @@ def init_deck():
             deck.append(Card(num, color))
             if num != 5:
                 deck.append(Card(num, color))
+    return deck
