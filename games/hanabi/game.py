@@ -9,6 +9,7 @@ class HanabiGame(Game):
     def __init__(self, num_players):
         self.np_random = np.random
         self.num_players = num_players
+        self.current_payoffs = [0 for _ in range(self.num_players)]
     
     def init_game(self):
         # Initialize a dealer that can deal cards
@@ -60,3 +61,6 @@ class HanabiGame(Game):
     
     def get_player_id(self):
         self.round.current_player_id
+    
+    def get_payoffs(self):
+        return self.current_payoffs
