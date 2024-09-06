@@ -185,8 +185,8 @@ class DQNAgent(object):
         Returns:
             q_values (numpy.array): a 1-d array where each entry represents a Q value
         '''
-        
-        q_values = self.q_estimator.predict_nograd(np.expand_dims(state['obs'], 0))[0]
+        inp = np.expand_dims(state['obs'], 0)
+        q_values = self.q_estimator.predict_nograd(inp)[0]
         masked_q_values = -np.inf * np.ones(self.num_actions, dtype=float)
         legal_actions = list(state['legal_actions'].keys())
         masked_q_values[legal_actions] = q_values[legal_actions]
@@ -229,11 +229,11 @@ class DQNAgent(object):
 
         self.train_t += 1
 
-        if self.save_path and self.train_t % self.save_every == 0:
-            # To preserve every checkpoint separately, 
-            # add another argument to the function call parameterized by self.train_t
-            self.save_checkpoint(self.save_path)
-            print("\nINFO - Saved model checkpoint.")
+        # if self.save_path and self.train_t % self.save_every == 0:
+        #     # To preserve every checkpoint separately, 
+        #     # add another argument to the function call parameterized by self.train_t
+        #     self.save_checkpoint(self.save_path)
+        #     print("\nINFO - Saved model checkpoint.")
 
 
     def feed_memory(self, state, action, reward, next_state, legal_actions, done):
