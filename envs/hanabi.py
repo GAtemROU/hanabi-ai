@@ -19,13 +19,13 @@ class HanabiEnv(Env):
         self.game = HanabiGame()
         super().__init__(config)
         print("HanabiEnv init") 
-        print(self.num_actions)
+        print(f'Action space size: {self.num_actions}')
         # self.state_shape = [[4, 4, 15] for _ in range(self.num_players)]
         # self.action_shape = [None for _ in range(self.num_players)]
     
     def _extract_state(self, state):
-        print("extracting state")
-        print(state)
+        # print("extracting state")
+        # print(state)
         obs = np.zeros((4, 4, 15), dtype=int)
         # utils.encode_hand(obs[:3], state['hand'])
         # utils.encode_target(obs[3], state['target'])
@@ -34,7 +34,7 @@ class HanabiEnv(Env):
         # extracted_state['raw_obs'] = state
         # extracted_state['raw_legal_actions'] = [a for a in state['legal_actions']]
         # extracted_state['action_record'] = self.action_recorder
-        return state
+        return extracted_state
     
     def get_payoffs(self):
         return np.array(self.game.get_payoffs())
