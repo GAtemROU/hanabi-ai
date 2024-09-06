@@ -22,5 +22,12 @@ class HanabiCard(Card):
     def __str__(self):
         return f'{self.color}-{self.num}'
     
+    def encode(self):
+        feature_vector = np.zeros(10)
+        feature_vector[5 + COLOR_TO_INDEX[self.color]] = 1
+        feature_vector[self.num - 1] = 1
+        return feature_vector
+        
+    
 
     

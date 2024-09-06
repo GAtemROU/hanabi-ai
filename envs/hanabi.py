@@ -20,20 +20,34 @@ class HanabiEnv(Env):
         super().__init__(config)
         print("HanabiEnv init") 
         print(f'Action space size: {self.num_actions}')
-        # self.state_shape = [[4, 4, 15] for _ in range(self.num_players)]
-        # self.action_shape = [None for _ in range(self.num_players)]
+        self.state_shape = [[self.num_players, 4, 15] for _ in range(self.num_players)]
+        self.action_shape = [None for _ in range(self.num_players)]
     
     def _extract_state(self, state):
         # print("extracting state")
         # print(state)
-        obs = np.zeros((4, 4, 15), dtype=int)
+        obs = np.zeros((8, 5, 10 ), dtype=int)
+        #input data: 
+        utils.encode_hands(obs[:2, :, :], state)
+        utils.encode_card_colors(obs[2, :, :], state)
+        utils.encode_state_info(obs[3, :, :], state)
+        utils.encode_hinted(obs[4:8, :, :], state)
+
+        # 1. hands of other players: 5 x (10) x (num_players - 1),  
+        # 2. cards on the field: 25 , 
+        # 3. dropped cards: 25, 
+        # 4. remaining hints: 1,
+        # 5. remaining lives: 1,
+        # 6. player number: num_players, 
+        # 6. info about cards: 5 * 20 * num_players,
+
         # utils.encode_hand(obs[:3], state['hand'])
         # utils.encode_target(obs[3], state['target'])
         legal_action_id = self._get_legal_actions()
         extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
-        # extracted_state['raw_obs'] = state
-        # extracted_state['raw_legal_actions'] = [a for a in state['legal_actions']]
-        # extracted_state['action_record'] = self.action_recorder
+        extracted_state['raw_obs'] = state
+        extracted_state['raw_legal_actions'] = [a for a in state['legal_actions']]
+        extracted_state['action_record'] = self.action_recorder
         return extracted_state
     
     def get_payoffs(self):

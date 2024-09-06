@@ -55,7 +55,8 @@ class HanabiRound(Round):
             if self.lives == 0:
                 self.is_over = True
                 self.print_history()
-                print("Game Over")
+
+                print("Game Over. Final Score: ", sum(self.field))
 
         player.hand.pop(target_card)
         self.cards_left = self.dealer.draw_card(player)

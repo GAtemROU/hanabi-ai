@@ -3,6 +3,8 @@ import os
 import json 
 import games
 from collections import OrderedDict
+import numpy as np
+
 ACTION_TYPE = ['play', 'discard', 'hint']
 CARD_ID = [0, 1, 2, 3, 4]
 HINT_TYPE = ['color', 'num']
@@ -53,3 +55,76 @@ def generate_action_space(num_players):
 
 def get_action_list():
     return ACTION_LIST
+
+
+        # utils.encode_hands(obs[:2, :, :], state)
+        # utils.encode_card_colors(obs[2, :, :], state)
+        # utils.encode_state_info(obs[3, :, :], state)
+        # utils.encode_hinted(obs[4:8, :, :], state)
+
+#     def get_state(self, player_id):
+        # state = {}
+        # # state.append(self.field)
+        # # state.append(self.hints)
+        # # state.append(self.lives)
+        # # state.append(self.cards_left)
+        # # state.append(self.discard)
+        # # for player in self.players:
+        # #     for (i, card) in enumerate(player.hand):
+        # #         state.append(card.encode())
+        # state['field'] = self.field
+        # state['hints'] = self.hints
+        # state['lives'] = self.lives
+        # state['cards_left'] = self.cards_left
+        # state['discard'] = self.discard
+        # state['current_player'] = self.current_player
+        # state['legal_actions'] = self.get_actions()
+        # hand_dict = {}
+        # for player in self.players:
+        #     hand_dict[player.id] = player.hand
+        # state['hands'] = hand_dict
+        # return state
+    
+def encode_hands(obs, state):
+    print("encoded hands")
+    for player_id in state['hands']:
+
+        if player_id == state['current_player']: continue 
+        print(f"player_id: {player_id}")
+        hand = state['hands'][player_id]
+        for i, card in enumerate(hand):
+            print(f"card: {card}")
+            obs[player_id, i, :] = card.encode()
+    
+    print(obs)
+    print("----- ")
+
+    return obs
+
+def encode_card_colors(obs, state):
+    values = np.zeros(50)
+    for item in state['field']:
+        for i in range (item):
+            values[(i) + item * 5] = 1
+
+    values[25:] = state['discard']
+    
+    #reshape 
+    obs = values.reshape(5, 10)
+    print('encoded card colors')
+    print(obs)
+    return obs 
+
+def encode_state_info(obs, state):
+    values = np.zeros(50)
+    values[0] = state['hints']
+    values[1] = state['lives']
+    values[2] = state['cards_left']
+    values[2 + state['current_player']] = 1
+    #reshape
+    obs = values.reshape(5, 10)
+    return obs
+
+def encode_hinted(obs, state):
+    
+    return obs
