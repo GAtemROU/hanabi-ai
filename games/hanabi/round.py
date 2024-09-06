@@ -7,7 +7,7 @@ INDEX_TO_COLOR = {0: 'red', 1: 'green', 2: 'blue', 3: 'yellow', 4: 'white'}
 INDEX_TO_NUM = {0: 1, 1: 2, 2: 3, 3: 4, 4: 5}
 
 class HanabiRound(Round):
-    def __init__(self, dealer, num_players, np_random):
+    def __init__(self, dealer, num_players, np_random, players):
         self.np_random = np_random
         self.dealer = dealer
         self.current_player = 0
@@ -21,6 +21,7 @@ class HanabiRound(Round):
         self.cards_left = dealer.cards_left()
         self.turns_left = num_players
         self.discard = np.zeros(25)
+        self.players = players
         
 
 
@@ -106,7 +107,7 @@ class HanabiRound(Round):
                 actions.append(('discard', i))
         return actions
     
-    def get_state(self):
+    def get_state(self, player_id):
         state = {}
         # state.append(self.field)
         # state.append(self.hints)
@@ -122,6 +123,7 @@ class HanabiRound(Round):
         state['cards_left'] = self.cards_left
         state['discard'] = self.discard
         state['current_player'] = self.current_player
+        state['legal_actions'] = self.get_actions()
         hand_dict = {}
         for player in self.players:
             hand_dict[player.id] = player.hand

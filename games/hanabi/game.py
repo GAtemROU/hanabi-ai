@@ -24,10 +24,10 @@ class HanabiGame(Game):
             self.dealer.deal_cards(player, player_to_num_cards[self.num_players])
 
         # Initialize a Round
-        self.round = HanabiRound(self.dealer, self.num_players, self.np_random)
+        self.round = HanabiRound(self.dealer, self.num_players, self.np_random, self.players)
 
         player_id = self.round.current_player
-        state = self.get_state()
+        state = self.get_state(player_id)
         return state, player_id
     
     
@@ -47,11 +47,11 @@ class HanabiGame(Game):
         action = action[2]
         self.round.proceed_round(player, target_player, action_type, action)
         player_id = self.round.current_player
-        state = self.get_state()
+        state = self.get_state(player_id)
         return state, player_id
     
-    def get_state(self):
-        return self.round.get_state()
+    def get_state(self, player_id):
+        return self.round.get_state(player_id)
     
     def get_legal_actions(self):
         return self.round.get_actions()
