@@ -16,8 +16,10 @@ class HanabiEnv(Env):
     def __init__(self, config=DEFAULT_GAME_CONFIG):
         self.name = 'hanabi'
         self.default_game_config = DEFAULT_GAME_CONFIG
-        self.game = HanabiGame(config['game_num_players'])
+        self.game = HanabiGame()
         super().__init__(config)
+        print("HanabiEnv init") 
+        print(self.num_actions)
         # self.state_shape = [[4, 4, 15] for _ in range(self.num_players)]
         # self.action_shape = [None for _ in range(self.num_players)]
     

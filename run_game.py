@@ -13,7 +13,7 @@ env = make(
         }
     )
 
-agent = RandomAgent(action_num=env.action_num)
+agent = RandomAgent(num_actions=env.num_actions)
 
 env.set_agents([agent for _ in range(env.num_players)])
 
