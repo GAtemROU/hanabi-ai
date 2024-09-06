@@ -47,11 +47,11 @@ class HanabiRound(Round):
             self.field[COLOR_TO_INDEX[card.color]] += 1
             if card.num == 5:
                 self.hints += 1
-            self.actions_history.append((player.get_player_id(), 'play', target_card.__str__(), "success"))
+            self.actions_history.append((player.get_player_id(), 'play', card.__str__(), "success"))
         else:
             self.lives -= 1
             self.discard[card.get_id()] += 1
-            self.actions_history.append((player.get_player_id(), 'play', target_card.__str__(), "fail"))
+            self.actions_history.append((player.get_player_id(), 'play', card.__str__(), "fail"))
             if self.lives == 0:
                 self.is_over = True
                 self.print_history()
@@ -74,7 +74,7 @@ class HanabiRound(Round):
         self.cards_left = self.dealer.draw_card(player)
         if self.cards_left == 0:
             self.deck_finished = True
-        self.actions_history.append((player.get_player_id(), 'discard', target_card.__str__()))
+        self.actions_history.append((player.get_player_id(), 'discard', card.__str__()))
 
 
     def _hint(self, player, action_type, target_player, hint):

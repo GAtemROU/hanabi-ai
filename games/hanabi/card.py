@@ -20,7 +20,7 @@ class HanabiCard(Card):
 
     # to_string
     def __str__(self):
-        return self.num + ' ' + self.color
+        return f'{self.color}-{self.num}'
     
 
     
