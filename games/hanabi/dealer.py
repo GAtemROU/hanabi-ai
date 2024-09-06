@@ -11,3 +11,10 @@ class HanabiDealer(Dealer):
     def deal_cards(self, player, num):
         for _ in range(num):
             player.hand.append(self.deck.pop())
+    def draw_card(self, player):
+        if len(self.deck) == 0:
+            return 0
+        player.hand.append(self.deck.pop())
+        return self.cards_left()
+    def cards_left(self):
+        return len(self.deck)
