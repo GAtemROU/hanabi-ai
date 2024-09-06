@@ -13,7 +13,6 @@ class HanabiRound(Round):
         self.dealer = dealer
         self.current_player = 0
         self.num_players = num_players
-        self.played_cards = []
         self.is_over = False
         self.hints = 8
         self.lives = 3
@@ -23,83 +22,86 @@ class HanabiRound(Round):
         self.turns_left = num_players
         self.discard = np.zeros(25)
         self.players = players
+        self.max_hints = 8
         
 
 
-    def proceed_round(self, player, target_player, action_type, action):
-        if self.deck_finished:
+    def proceed_round(self, action):
+        player = self.players[self.current_player]
+        if self.cards_left == 0:
             self.turns_left -= 1
         if self.turns_left == 0:
             self.is_over = True
-        match action_type:
+        match action['type']:
             case 'play':
-                self._play_card(player, action)
+                self._play(player, action['target_card'])
             case 'discard':
-                self._discard_card(player, action)
+                self._discard(player, action['target_card'])
             case 'hint':
-                self._hint(player, target_player, action)
+                self._hint(player, action['hint_type'], action['target_player'], action['hint'])
+        self.current_player = (self.current_player + 1) % self.num_players
     
-    def _play_card(self, player, action):
-        played = player.hand[action]
-        if played.num == self.field[COLOR_TO_INDEX[played.color]] + 1:
-            self.field[COLOR_TO_INDEX[played.color]] += 1
-            self.played_cards.append(played)
-            player.hand.remove(played)
-            self.actions_history.append((player, 'play', played))
+    def _play(self, player, target_card):
+        card = player.hand[target_card]
+        if card.num == self.field[COLOR_TO_INDEX[card.color]]+1:
+            self.field[COLOR_TO_INDEX[card.color]] += 1
+            if card.num == 5:
+                self.hints += 1
+            self.actions_history.append((player.get_player_id(), 'play', target_card.__str__(), "success"))
         else:
             self.lives -= 1
-            self.actions_history.append((player, 'play', played, 'fail'))
+            self.discard[card.get_id()] += 1
+            self.actions_history.append((player.get_player_id(), 'play', target_card.__str__(), "fail"))
             if self.lives == 0:
                 self.is_over = True
-        if played.num == 5:
-            self.hints += 1
+                self.print_history()
+                print("Game Over")
+
+        player.hand.pop(target_card)
         self.cards_left = self.dealer.draw_card(player)
         if self.cards_left == 0:
             self.deck_finished = True
-        
-    def _discard_card(self, player, action):
-        discarded = player.hand[action]
-        self.discard[COLOR_TO_INDEX[discarded.color] * 5 + NUM_TO_INDEX[discarded.num] - 1] += 1
-        player.hand.remove(discarded)
+
+    def print_history(self):
+        for action in self.actions_history:
+            print(action)
+
+    def _discard(self, player, target_card):
         self.hints += 1
-        self.actions_history.append((player, 'discard', discarded))
+        card = player.hand[target_card]
+        self.discard[card.get_id()] += 1
+        player.hand.pop(target_card)
         self.cards_left = self.dealer.draw_card(player)
         if self.cards_left == 0:
             self.deck_finished = True
-    
-    def _hint(self, player, target_player, action):
+        self.actions_history.append((player.get_player_id(), 'discard', target_card.__str__()))
+
+
+    def _hint(self, player, action_type, target_player, hint):
         self.hints -= 1
-        if (INDEX_TO_COLOR.get(action) is not None):
-            self._hint_color(player, target_player, action)
+        if (action_type == 'color'):
+            self._hint_color(player, target_player, hint)
         else:
-            self._hint_num(player, target_player, action)
+            self._hint_num(player, target_player, hint)  
+    
+    def _hint_color(self, player, target_player, color):
+        for (i, card) in enumerate(self.players[target_player].hand):
+            if card.color == color:
+                card.hinted[COLOR_TO_INDEX[color]] = 1
+        self.actions_history.append((player.get_player_id(), 'hint-color', target_player, color))
+    
+    def _hint_num(self, player, target_player, num):
+        for (i, card) in enumerate(self.players[target_player].hand):
+            if card.num == num:
+                card.hinted[5 + NUM_TO_INDEX[num]] = 1
+        self.actions_history.append((player.get_player_id(), 'hint-num', target_player, num))
 
-        
-    def _hint_color(self, player, target_player, action):
-        hinted = np.zeros(len(target_player.hand))
-        for i in range(len(target_player.hand)):
-            if COLOR_TO_INDEX[target_player.hand[i].color] == action:
-                hinted[i] = 1
-                player.hand[i].hinted[action] = 1
-            else :
-                hinted[i] = 0
-        self.actions_history.append((player, 'hint', hinted))
-
-    def _hint_num(self, player, target_player, action):
-        hinted = np.zeros(len(target_player.hand))
-        for i in range(len(target_player.hand)):
-            if NUM_TO_INDEX[target_player.hand[i].num] == action:
-                hinted[i] = 1
-                player.hand[i].hinted[action] = 1
-            else :
-                hinted[i] = 0
-        self.actions_history.append((player, 'hint', hinted))   
-
-    def get_legal_actions(self):
+    def get_actions(self):
         actions = []
         for (i, card) in enumerate(self.players[self.current_player].hand):
             actions.append(f'play-{i}')
-            actions.append(f'discard-{i}')
+            if self.hints < self.max_hints:
+                actions.append(f'discard-{i}')
         if self.hints > 0:
             for player in self.players:
                 if player.id != self.current_player:
@@ -125,7 +127,7 @@ class HanabiRound(Round):
         state['cards_left'] = self.cards_left
         state['discard'] = self.discard
         state['current_player'] = self.current_player
-        state['legal_actions'] = self.get_legal_actions()
+        state['legal_actions'] = self.get_actions()
         hand_dict = {}
         for player in self.players:
             hand_dict[player.id] = player.hand

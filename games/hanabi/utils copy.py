@@ -1,14 +1,17 @@
-from games.hanabi.card import HanabiCard as Card
+from games.hanabi.card import Card
 import os 
 import json 
 import games
 from collections import OrderedDict
+
 ACTION_TYPE = ['play', 'discard', 'hint']
 CARD_ID = [0, 1, 2, 3, 4]
 HINT_TYPE = ['color', 'num']
 COLORS = ['red', 'green', 'blue', 'yellow', 'white']
 NUMS = [1, 2, 3, 4, 5]
 CARDS_PER_PLAYER = {2: 5, 3: 5, 4: 4, 5: 4}
+
+ROOT_PATH = games.__path__[0]
 
 card_info = Card.info
 def init_deck():
@@ -21,12 +24,6 @@ def init_deck():
             if num != 5:
                 deck.append(Card(num, color))
     return deck
-
-ROOT_PATH = games.__path__[0]
-# a map of abstract action to its index and a list of abstract action
-with open(os.path.join(ROOT_PATH, 'hanabi/jsondata/action_space.json'), 'r') as file:
-    ACTION_SPACE = json.load(file, object_pairs_hook=OrderedDict)
-    ACTION_LIST = list(ACTION_SPACE.keys())
 
 def generate_action_space(num_players):
     # string to index
@@ -50,6 +47,7 @@ def generate_action_space(num_players):
     with open(os.path.join(ROOT_PATH, 'hanabi/jsondata/action_space.json'), 'w') as file:
         json.dump(action_space, file)
 
-
-def get_action_list():
-    return ACTION_LIST
+# a map of abstract action to its index and a list of abstract action
+with open(os.path.join(ROOT_PATH, 'hanabi/jsondata/action_space.json'), 'r') as file:
+    ACTION_SPACE = json.load(file, object_pairs_hook=OrderedDict)
+    ACTION_LIST = list(ACTION_SPACE.keys())

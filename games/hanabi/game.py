@@ -28,24 +28,33 @@ class HanabiGame(Game):
 
         player_id = self.round.current_player
         state = self.get_state(player_id)
-        return state, player_id
-    
-    
+        return state, player_id        
+
+    def decode_action(self, action):
+        action_list = action.split('-')
+        action_type = action_list[0]
+        action = {'type': action_type}
+        if action_type != 'hint':
+            action['target_card'] = int(action_list[1])
+            return action
+        action['hint_type'] = action_list[1]
+        action['target_player'] = int(action_list[2])
+        if action['hint_type'] == 'color':
+            action['hint'] = action_list[3]
+        else:
+            action['hint'] = int(action_list[3])
+        return action 
+
+
+
     def step(self, action):
         '''
         Args: action (tuple): (target_player_id, action_type, action)
         '''
-        player = self.round.current_player
-        target_player = self.players[action[0]]
-        match action[1]:
-            case 0:
-                action_type = 'play'
-            case 1:
-                action_type = 'discard'
-            case 2:
-                action_type = 'hint'
-        action = action[2]
-        self.round.proceed_round(player, target_player, action_type, action)
+        # match action string as 'action_type-target_player-action'
+        action_dict = self.decode_action(action)
+        
+        self.round.proceed_round(action_dict)
         player_id = self.round.current_player
         state = self.get_state(player_id)
         return state, player_id
@@ -54,13 +63,13 @@ class HanabiGame(Game):
         return self.round.get_state(player_id)
     
     def get_legal_actions(self):
-        return self.round.get_legal_actions()
+        return self.round.get_actions()
     
     def get_num_players(self):
         return self.num_players
     
     def get_player_id(self):
-        self.round.current_player_id
+        self.round.current_player
     
     def get_payoffs(self):
         return self.current_payoffs
