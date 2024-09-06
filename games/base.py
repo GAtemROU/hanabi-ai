@@ -9,3 +9,6 @@ class Player:
 
 class Round: 
     pass
+
+class Dealer:
+    pass

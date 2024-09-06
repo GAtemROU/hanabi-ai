@@ -51,7 +51,7 @@ class HanabiGame(Game):
         return state, player_id
     
     def get_state(self):
-        return self.state
+        return self.round.get_state()
     
     def get_legal_actions(self):
         return self.round.get_actions()
@@ -64,3 +64,15 @@ class HanabiGame(Game):
     
     def get_payoffs(self):
         return self.current_payoffs
+    
+
+    def get_num_actions(self):
+        return 2 * 5 * self.num_players + 2 * 5 
+
+    def is_over(self):
+        ''' Check if the game is over
+
+        Returns:
+            (boolean): True if the game is over
+        '''
+        return self.round.is_over

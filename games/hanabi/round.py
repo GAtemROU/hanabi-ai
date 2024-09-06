@@ -107,14 +107,24 @@ class HanabiRound(Round):
         return actions
     
     def get_state(self):
-        state = []
-        state.append(self.field)
-        state.append(self.hints)
-        state.append(self.lives)
-        state.append(self.cards_left)
-        state.append(self.discard)
+        state = {}
+        # state.append(self.field)
+        # state.append(self.hints)
+        # state.append(self.lives)
+        # state.append(self.cards_left)
+        # state.append(self.discard)
+        # for player in self.players:
+        #     for (i, card) in enumerate(player.hand):
+        #         state.append(card.encode())
+        state['field'] = self.field
+        state['hints'] = self.hints
+        state['lives'] = self.lives
+        state['cards_left'] = self.cards_left
+        state['discard'] = self.discard
+        state['current_player'] = self.current_player
+        hand_dict = {}
         for player in self.players:
-            for (i, card) in enumerate(player.hand):
-                state.append(card.encode())
-        return np.array(state)
+            hand_dict[player.id] = player.hand
+        state['hands'] = hand_dict
+        return state
     

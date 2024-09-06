@@ -1,4 +1,4 @@
-from card import Card
+from games.hanabi.card import HanabiCard as Card
 import os 
 import json 
 import games

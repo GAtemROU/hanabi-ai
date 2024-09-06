@@ -1,4 +1,4 @@
-from utils import init_deck
+from games.hanabi.utils import init_deck
 from games.base import Dealer
 
 class HanabiDealer(Dealer):

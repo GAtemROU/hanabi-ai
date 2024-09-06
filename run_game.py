@@ -1,8 +1,17 @@
 import envs.hanabi as hanabi
 from agents.random_agent import RandomAgent
 import pprint
+import utils.parser as parser
+from envs.registration import make
 
-env = hanabi.Env()
+
+args = parser.get_args()
+env = make(
+        args.env,
+        config={
+            'seed': args.seed,
+        }
+    )
 
 agent = RandomAgent(action_num=env.action_num)
 
