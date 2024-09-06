@@ -72,7 +72,7 @@ class HanabiGame(Game):
         self.round.current_player
     
     def get_payoffs(self):
-        return [ -1 + 2 *(sum(self.round.field)) / 25  for _ in range(self.num_players)]
+        return self.round.get_payoffs()
     
     
     def get_num_actions(self):

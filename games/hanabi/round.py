@@ -23,8 +23,10 @@ class HanabiRound(Round):
         self.discard = np.zeros(25)
         self.players = players
         self.max_hints = 8
+        self.payoffs = np.zeros(num_players)
         
-
+    def get_payoffs(self):
+        return self.payoffs
 
     def proceed_round(self, action):
         player = self.players[self.current_player]
@@ -48,10 +50,12 @@ class HanabiRound(Round):
             if card.num == 5:
                 self.hints += 1
             self.actions_history.append((player.get_player_id(), 'play', card.__str__(), "success"))
+            self.payoffs[player.get_player_id()] += 1
         else:
             self.lives -= 1
             self.discard[card.get_id()] += 1
             self.actions_history.append((player.get_player_id(), 'play', card.__str__(), "fail"))
+            self.payoffs[player.get_player_id()] -= (card.num == 5) if 5 else 1*(5-card.num)
             if self.lives == 0:
                 self.is_over = True
                 # self.print_history()
@@ -76,6 +80,10 @@ class HanabiRound(Round):
         if self.cards_left == 0:
             self.deck_finished = True
         self.actions_history.append((player.get_player_id(), 'discard', card.__str__()))
+        if (self.field[COLOR_TO_INDEX[card.color]] < card.num):
+            self.payoffs[player.get_player_id()] -= (card.num == 5) if 5 else 1*(5-card.num)
+        else:
+            self.payoffs[player.get_player_id()] += 1
 
 
     def _hint(self, player, action_type, target_player, hint):
@@ -83,7 +91,8 @@ class HanabiRound(Round):
         if (action_type == 'color'):
             self._hint_color(player, target_player, hint)
         else:
-            self._hint_num(player, target_player, hint)  
+            self._hint_num(player, target_player, hint)
+        self.payoffs[player.get_player_id()] += 0.1  
     
     def _hint_color(self, player, target_player, color):
         for (i, card) in enumerate(self.players[target_player].hand):
