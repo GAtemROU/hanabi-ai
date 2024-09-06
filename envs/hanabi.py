@@ -26,11 +26,11 @@ class HanabiEnv(Env):
     def _extract_state(self, state):
         print("extracting state")
         print(state)
-        # obs = np.zeros((4, 4, 15), dtype=int)
+        obs = np.zeros((4, 4, 15), dtype=int)
         # utils.encode_hand(obs[:3], state['hand'])
         # utils.encode_target(obs[3], state['target'])
-        # legal_action_id = self._get_legal_actions()
-        # extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
+        legal_action_id = self._get_legal_actions()
+        extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
         # extracted_state['raw_obs'] = state
         # extracted_state['raw_legal_actions'] = [a for a in state['legal_actions']]
         # extracted_state['action_record'] = self.action_recorder
