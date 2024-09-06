@@ -96,10 +96,8 @@ def encode_hands(obs, state):
             print(f"card: {card}")
             obs[player_id, i, :] = card.encode()
     
-    print(obs)
-    print("----- ")
-
-    return obs
+    # print(obs)
+    # print("----- ")
 
 def encode_card_colors(obs, state):
     values = np.zeros(50)
@@ -110,10 +108,9 @@ def encode_card_colors(obs, state):
     values[25:] = state['discard']
     
     #reshape 
-    obs = values.reshape(5, 10)
-    print('encoded card colors')
-    print(obs)
-    return obs 
+    obs[:, :] = values.reshape(5, 10)
+    # print('encoded card colors')
+
 
 def encode_state_info(obs, state):
     values = np.zeros(50)
@@ -122,9 +119,9 @@ def encode_state_info(obs, state):
     values[2] = state['cards_left']
     values[2 + state['current_player']] = 1
     #reshape
-    obs = values.reshape(5, 10)
-    return obs
+    obs[:, :] = values.reshape(5, 10)
+
 
 def encode_hinted(obs, state):
-    
+
     return obs
